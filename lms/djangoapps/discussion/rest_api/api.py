@@ -82,6 +82,7 @@ from openedx.core.lib.exceptions import CourseNotFoundError, DiscussionNotFoundE
 from xmodule.course_block import CourseBlock
 from xmodule.modulestore.django import modulestore
 from xmodule.tabs import CourseTabList
+from .discussions_notifications import send_response_notifications
 
 from ..config.waffle import ENABLE_LEARNERS_STATS
 from ..django_comment_client.base.views import (
@@ -127,7 +128,9 @@ from .utils import (
     discussion_open_for_user,
     get_usernames_for_course,
     get_usernames_from_search_string,
-    set_attribute, send_response_notifications, is_posting_allowed
+    set_attribute,
+    send_response_notifications,
+    is_posting_allowed
 )
 
 
