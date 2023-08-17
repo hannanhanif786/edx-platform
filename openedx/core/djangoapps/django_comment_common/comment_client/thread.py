@@ -20,7 +20,7 @@ class Thread(models.Model):
         'highlighted_body', 'endorsed', 'read', 'group_id', 'group_name', 'pinned',
         'abuse_flaggers', 'resp_skip', 'resp_limit', 'resp_total', 'thread_type',
         'endorsed_responses', 'non_endorsed_responses', 'non_endorsed_resp_total',
-        'context', 'last_activity_at', 'closed_by', 'close_reason_code', 'edit_history', 'subscribers'
+        'context', 'last_activity_at', 'closed_by', 'close_reason_code', 'edit_history',
     ]
 
     # updateable_fields are sent in PUT requests
@@ -184,7 +184,7 @@ class Thread(models.Model):
         else:
             raise utils.CommentClientRequestError("Can only flag/unflag for threads or comments")
         params = {'user_id': user.id}
-        # if you're an admin, when you unflag, remove ALL flags
+        #if you're an admin, when you unflag, remove ALL flags
         if removeAll:
             params['all'] = True
 
