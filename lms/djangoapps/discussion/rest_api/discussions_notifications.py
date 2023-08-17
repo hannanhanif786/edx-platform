@@ -95,25 +95,24 @@ class DiscussionNotificationSender:
         except:
         Tread creator , response creator,
         """
-        if self.parent_response:
-            users = []
-            page = 1
-            has_more_subscribers = True
+        users = []
+        page = 1
+        has_more_subscribers = True
 
-            while has_more_subscribers:
-                subscribers = Subscription.get(self.thread.id, query_params={'page': page})
+        while has_more_subscribers:
 
-                if subscribers:
-                    for subscriber in subscribers:
-                        subscriber_user_id = subscriber.user_id
+            subscribers = Subscription.get(self.thread.id, query_params={'page': page})
+            if page <= subscribers.num_pages:
+                for subscriber in subscribers.collection:
+                    # Check if the subscriber is not the thread creator or response creator
+                    subscriber_id = int(subscriber.get('subscriber_id'))
+                    # do not send notification to the user who created the response and the thread
+                    if subscriber_id != int(self.thread.user_id) and subscriber_id != int(self.creator.id):
+                        users.append(subscriber_id)
+            else:
+                has_more_subscribers = False
+            page += 1
+        # Remove duplicate users from the list of users to send notification
+        users = list(set(users))
 
-                        # Check if the subscriber is not the thread creator or response creator
-                        if subscriber_user_id not in [self.thread.user_id, self.parent_response['user_id']]:
-                            users.append(subscriber_user_id)
-
-                    page += 1
-                else:
-                    has_more_subscribers = False
-
-            # Send notifications to the filtered subscribers
-            self._send_notification(users, "response_on_followed_post")
+        self._send_notification(users, "response_on_followed_post")
