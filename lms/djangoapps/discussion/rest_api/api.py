@@ -129,7 +129,6 @@ from .utils import (
     get_usernames_for_course,
     get_usernames_from_search_string,
     set_attribute,
-    send_response_notifications,
     is_posting_allowed
 )
 

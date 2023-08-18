@@ -1,3 +1,6 @@
+"""
+Disucssion notifications sender util.
+"""
 from openedx_events.learning.signals import USER_NOTIFICATION_REQUESTED
 from openedx_events.learning.data import UserNotificationData
 from openedx.core.djangoapps.django_comment_common.comment_client.comment import Comment

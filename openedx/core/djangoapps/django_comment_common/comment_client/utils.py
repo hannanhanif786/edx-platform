@@ -141,6 +141,7 @@ class SubscriptionsPaginatedResult:
         self.subscriptions_count = subscriptions_count
         self.corrected_text = corrected_text
 
+
 def check_forum_heartbeat():
     """
     Check the forum connection via its built-in heartbeat service and create an answer which can be used in the LMS
