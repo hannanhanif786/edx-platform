@@ -337,7 +337,7 @@ class LoginAndRegistrationTest(ThirdPartyAuthTestMixin, UrlResetMixin, ModuleSto
     ):
         params = []
         request = RequestFactory().get(reverse(url_name), params, HTTP_ACCEPT='text/html')
-        SessionMiddleware().process_request(request)
+        SessionMiddleware(get_response=lambda request: None).process_request(request)
         request.user = AnonymousUser()
 
         self.enable_saml()
