@@ -174,7 +174,9 @@ class TestSafeSessionProcessResponse(TestSafeSessionsLogMixin, TestCase):
         if set_session_cookie:
             self.client.response.cookies[settings.SESSION_COOKIE_NAME] = "some_session_id"
 
-        response = SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+        response = SafeSessionMiddleware(get_response=lambda request: None).process_response(
+            self.request, self.client.response
+        )
         assert response.status_code == 200
 
     def assert_response_with_delete_cookie(
@@ -293,7 +295,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         self.set_up_for_success()
 
         with self.assert_not_logged():
-            response = SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+            response = SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                self.request, self.client.response
+            )
         assert response.status_code == 200
 
     def test_success(self):
@@ -316,14 +320,18 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         self.request.session = self.client.session
 
         with self.assert_parse_error():
-            request_response = SafeSessionMiddleware(get_response=lambda request: None).process_request(self.request)
+            request_response = SafeSessionMiddleware(get_response=lambda request: None).process_request(
+                self.request
+            )
             assert request_response.status_code == expected_response_status
 
         assert self.request.need_to_delete_cookie
         self.cookies_from_request_to_response()
 
         with patch('django.http.HttpResponse.delete_cookie') as mock_delete_cookie:
-            SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+            SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                self.request, self.client.response
+            )
             assert {'sessionid', 'edx-jwt-cookie-header-payload'} \
                 <= {call.args[0] for call in mock_delete_cookie.call_args_list}
 
@@ -355,7 +363,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
 
         with self.assert_logged_for_request_user_mismatch(self.user.id, self.request.user.id, 'warning', '/', False):
             with patch('openedx.core.djangoapps.safe_sessions.middleware.set_custom_attribute') as mock_attr:
-                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                    self.request, self.client.response
+                )
         assert response.status_code == 200
         set_attr_call_args = [call.args for call in mock_attr.call_args_list]
         assert ("safe_sessions.user_mismatch", "request-response-mismatch") in set_attr_call_args
@@ -374,7 +384,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
 
         with self.assert_logged_for_request_user_mismatch(self.user.id, self.request.user.id, 'warning', '/', False):
             with patch('openedx.core.djangoapps.safe_sessions.middleware.set_custom_attribute') as mock_attr:
-                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                    self.request, self.client.response
+                )
         assert response.status_code == 401
         assert SafeSessionMiddleware.get_user_id_from_session(self.request) is None  # session cleared
         set_attr_call_args = [call.args for call in mock_attr.call_args_list]
@@ -392,7 +404,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         with self.assert_logged_for_session_user_mismatch(self.user.id, different_user.id, self.request.path,
                                                           False):
             with patch('openedx.core.djangoapps.safe_sessions.middleware.set_custom_attribute') as mock_attr:
-                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                    self.request, self.client.response
+                )
         assert response.status_code == 200
         set_attr_call_args = [call.args for call in mock_attr.call_args_list]
         assert ("safe_sessions.user_mismatch", "request-session-mismatch") in set_attr_call_args
@@ -410,7 +424,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         with self.assert_logged_for_both_mismatch(self.user.id, different_user.id,
                                                   self.request.user.id, self.request.path, False):
             with patch('openedx.core.djangoapps.safe_sessions.middleware.set_custom_attribute') as mock_attr:
-                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                    self.request, self.client.response
+                )
         assert response.status_code == 200
         set_attr_call_args = [call.args for call in mock_attr.call_args_list]
         assert ("safe_sessions.user_mismatch", "request-response-and-session-mismatch") in set_attr_call_args
@@ -421,7 +437,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         self.set_up_for_success()
         self.request.user = UserFactory.create()
         with self.assert_logged('SafeCookieData: Changing request user. ', log_level='warning'):
-            SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+            SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                self.request, self.client.response
+            )
         mock_set_custom_attribute.assert_has_calls([call('safe_sessions.user_id_list', '1,2')])
 
     @patch("openedx.core.djangoapps.safe_sessions.middleware.LOG_REQUEST_USER_CHANGES", False)
@@ -429,7 +447,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         self.set_up_for_success()
         self.request.user = UserFactory.create()
         with self.assert_regex_not_logged('SafeCookieData: Changing request user. ', log_level='warning'):
-            SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+            SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                self.request, self.client.response
+            )
 
     @override_settings(LOG_REQUEST_USER_CHANGE_HEADERS=True)
     @patch("openedx.core.djangoapps.safe_sessions.middleware.LOG_REQUEST_USER_CHANGES", True)
@@ -438,7 +458,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         self.set_up_for_success()
         self.request.user = UserFactory.create()
         with self.assert_logged('SafeCookieData: Changing request user. ', log_level='warning'):
-            SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+            SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                self.request, self.client.response
+            )
         # Note: Since the test cache is not retaining its values for some reason, we'll
         #   simply assert that the cache is set (here) and checked (below).
         mock_cache.set_many.assert_called_with(
@@ -472,7 +494,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
         self.request.session = MagicMock()
         del self.request.user
         with self.assert_not_logged():
-            SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+            SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                self.request, self.client.response
+            )
 
     def test_no_warn_on_expected_user_change(self):
         """
@@ -489,7 +513,9 @@ class TestSafeSessionMiddleware(TestSafeSessionsLogMixin, CacheIsolationTestCase
 
         with self.assert_no_warning_logged():
             with patch('openedx.core.djangoapps.safe_sessions.middleware.set_custom_attribute') as mock_attr:
-                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(self.request, self.client.response)
+                response = SafeSessionMiddleware(get_response=lambda request: None).process_response(
+                    self.request, self.client.response
+                )
         assert response.status_code == 200
         assert 'safe_sessions.user_mismatch' not in [call.args[0] for call in mock_attr.call_args_list]
 
