@@ -324,6 +324,8 @@ django-mptt==0.14.0
     #   -r requirements/edx/base.in
     #   openedx-django-wiki
 django-multi-email-field==0.6.2
+
+django-multiselectfield==0.1.12
     # via edx-enterprise
 django-mysql==4.9.0
     # via -r requirements/edx/base.in
@@ -404,7 +406,7 @@ djangorestframework-xml==2.0.0
     # via edx-enterprise
 djfernet==0.8.1
     # via edxval
-docopt==0.6.2
+docopt
     # via -r requirements/edx/base.in
 docutils==0.19
     # via botocore
@@ -702,6 +704,8 @@ markdown==3.3.7
     #   xblock-poll
 markey==0.8
     # via enmerkar-underscore
+mandrill==1.0.60
+mailchimp3
 markupsafe==2.1.2
     # via
     #   -r requirements/edx/paver.txt

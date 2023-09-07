@@ -17,7 +17,8 @@ class VideoUploadConfig(ConfigurationModel):
         blank=True,
         help_text="A comma-separated list of names of profiles to include in video encoding downloads."
     )
-
+    class Meta:
+        app_label = "contentstore"
     @classmethod
     def get_profile_whitelist(cls):
         """Get the list of profiles to include in the encoding download"""

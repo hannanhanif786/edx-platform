@@ -16,6 +16,7 @@ from openedx.core.djangoapps.theming.helpers import get_current_site
 from openedx.core.djangoapps.user_authn.toggles import should_redirect_to_authn_microfrontend
 from openedx.core.djangoapps.user_api.preferences.api import get_user_preference
 from common.djangoapps.student.message_types import AccountRecovery as AccountRecoveryMessage
+from common.djangoapps.util.lib.mandril import send_mail, Mandril
 
 
 def send_account_recovery_email_for_user(user, request, email=None):
@@ -45,9 +46,13 @@ def send_account_recovery_email_for_user(user, request, email=None):
         )
     })
 
-    msg = AccountRecoveryMessage().personalize(
-        recipient=Recipient(user.id, email),
-        language=get_user_preference(user, LANGUAGE_KEY),
-        user_context=message_context,
-    )
-    ace.send(msg)
+    # msg = AccountRecoveryMessage().personalize(
+    #     recipient=Recipient(user.id, email),
+    #     language=get_user_preference(user, LANGUAGE_KEY),
+    #     user_context=message_context,
+    # )
+    # ace.send(msg)
+    subject = "Reset Password"
+    link = message_context['reset_link']
+    temp = Mandril.PASSWORD_RESET_EMAIL
+    send_mail(user.username, user.email, link, temp)

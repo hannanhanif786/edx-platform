@@ -115,8 +115,9 @@ def diff_coverage(options):
 
     # Find all coverage XML files (both Python and JavaScript)
     xml_reports = []
-
+    print("TESTING      ____________________-", "Env.REPORT_DIR : ",Env.REPORT_DIR)
     for filepath in Env.REPORT_DIR.walk():
+        print("FILE PATH : ______________ : ",filepath)
         if bool(re.match(r'^coverage.*\.xml$', filepath.basename())):
             xml_reports.append(filepath)
 

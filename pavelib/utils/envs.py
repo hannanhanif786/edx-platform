@@ -46,9 +46,9 @@ class Env:
     """
     Load information about the execution environment.
     """
-
     # Root of the git repository (edx-platform)
     REPO_ROOT = repo_root()
+    print("For Testing the repo root : ",REPO_ROOT)
 
     # Reports Directory
     REPORT_DIR = REPO_ROOT / 'reports'

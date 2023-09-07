@@ -60,7 +60,8 @@ class CourseCreator(models.Model):
     def __str__(self):
         return f"{self.user} | {self.state} [{self.state_changed}]"
 
-
+class Meta:
+    app_label = "course_creators"
 @receiver(post_init, sender=CourseCreator)
 def post_init_callback(sender, **kwargs):  # lint-amnesty, pylint: disable=unused-argument
     """

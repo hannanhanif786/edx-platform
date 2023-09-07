@@ -17,4 +17,7 @@ class TestAdminView(TestCase):
     def test_admin_login_redirect(self, admin_url):
         """Admin login will redirect towards the site login page."""
         response = self.client.get(admin_url, follow=True)
+        print("Admin Url : ", admin_url)
+        for i in response.redirect_chain:
+            print("This is for testing : ",i)
         assert any('/login/edx-oauth2/?next=' in r[0] for r in response.redirect_chain)

@@ -60,7 +60,7 @@ from openedx.core.djangoapps.theming.helpers import get_themes
 from openedx.core.djangoapps.user_authn.utils import is_safe_login_or_logout_redirect
 from openedx.core.lib.time_zone_utils import get_time_zone_offset
 from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: disable=wrong-import-order
-
+from common.djangoapps.util.lib.mandril import send_mail, Mandril
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
 VERIFY_STATUS_NEED_TO_VERIFY = "verify_need_to_verify"
@@ -737,7 +737,10 @@ def do_create_account(form, custom_form=None):
             raise
 
     registration.register(user)
-
+    subject =  "Welcome to CodeFulcrum LMS",
+    text = 'This is a message For confirming your registration'
+    template = Mandril.ACCOUNT_ACTIVATION_EMAIL
+    send_mail(proposed_username, form.cleaned_data["email"], temp=template)
     profile_fields = [
         "name", "level_of_education", "gender", "mailing_address", "city", "country", "goals",
         "year_of_birth"
@@ -754,7 +757,6 @@ def do_create_account(form, custom_form=None):
     except Exception:
         log.exception(f"UserProfile creation failed for user {user.id}.")
         raise
-
     return user, profile, registration
 
 

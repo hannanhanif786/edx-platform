@@ -18,6 +18,8 @@ class StudioConfig(ConfigurationModel):
         default="about course_info static_tab",
         help_text="Space-separated list of XBlocks on which XBlockAsides should never render in studio",
     )
+    class Meta:
+        app_label = "xblock_config"
 
     @classmethod
     def asides_enabled(cls, block_type):

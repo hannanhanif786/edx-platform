@@ -3264,6 +3264,9 @@ INSTALLED_APPS = [
 
     # MFE API
     'lms.djangoapps.mfe_config_api',
+    
+    # Onboarding App
+    'lms.djangoapps.onboarding',
 ]
 
 ######################### CSRF #########################################

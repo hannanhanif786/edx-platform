@@ -81,6 +81,7 @@ from common.djangoapps.util.db import outer_atomic
 from common.djangoapps.util.json_request import JsonResponse
 from common.djangoapps.student.signals import USER_EMAIL_CHANGED
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
+from common.djangoapps.util.lib.mandril import send_mail, Mandril
 
 log = logging.getLogger("edx.student")
 
@@ -776,7 +777,11 @@ def do_email_change_request(user, new_email, activation_key=None, secondary_emai
         )
 
     try:
-        ace.send(msg)
+        subject = "Reset Password"
+        link = message_context['reset_link']
+        temp = Mandril.VERIFY_CHANGE_USER_EMAIL
+        send_mail(user.username, user.email, link, temp)
+        # ace.send(msg)
         log.info("Email activation link sent to user [%s].", new_email)
     except Exception:
         from_address = configuration_helpers.get_value('email_from_address', settings.DEFAULT_FROM_EMAIL)

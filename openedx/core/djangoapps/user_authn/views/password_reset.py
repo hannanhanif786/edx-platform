@@ -48,7 +48,7 @@ from common.djangoapps.student.forms import send_account_recovery_email_for_user
 from common.djangoapps.student.models import AccountRecovery, LoginFailures
 from common.djangoapps.util.json_request import JsonResponse
 from common.djangoapps.util.password_policy_validators import normalize_password, validate_password
-
+from common.djangoapps.util.lib.mandril import send_mail, Mandril
 POST_EMAIL_KEY = 'openedx.core.djangoapps.util.ratelimit.request_post_email'
 REAL_IP_KEY = 'openedx.core.djangoapps.util.ratelimit.real_ip'
 SETTING_CHANGE_INITIATED = 'edx.user.settings.change_initiated'
@@ -127,14 +127,16 @@ def send_password_reset_success_email(user, request):
     message_context.update(
         {'login_link': f'{lms_root_url}/login', 'request': request, }
     )
-
     msg = PasswordResetSuccess(context=message_context).personalize(
         recipient=Recipient(user.id, user.email),
         language=user_language_preference,
         user_context={"name": user.profile.name},
     )
     try:
-        ace.send(msg)
+        subject = "Password Reset Confirmation"
+        template = Mandril.PASSWORD_RESET_COMPLETE
+        send_mail(user.profile.name, user.email, subject, temp=template)
+        # ace.send(msg)
     except Exception:  # pylint: disable=broad-except
         log.exception('PasswordResetSuccess: sending email to user [%s] failed.', user.username)
 
@@ -151,6 +153,10 @@ def send_password_reset_email_for_user(user, request, preferred_email=None):
     message_context, user_language_preference = get_user_default_email_params(user)
     site_name = settings.AUTHN_MICROFRONTEND_DOMAIN if should_redirect_to_authn_microfrontend() \
         else configuration_helpers.get_value('SITE_NAME', settings.SITE_NAME)
+    if site_name == "apps.local.overhang.io/authn":
+        site_name_split = site_name.split("/")
+        site_name = site_name_split[0]+":1999/"+site_name_split[1] 
+
     message_context.update({
         'request': request,  # Used by google_analytics_tracking_pixel
         # TODO: This overrides `platform_name` from `get_base_template_context` to make the tests passes
@@ -170,7 +176,11 @@ def send_password_reset_email_for_user(user, request, preferred_email=None):
         language=user_language_preference,
         user_context=message_context,
     )
-    ace.send(msg)
+    subject = "Reset Password"
+    link = message_context['reset_link']
+    temp = Mandril.PASSWORD_RESET_EMAIL
+    send_mail(user.username, user.email, link, temp)
+    # ace.send(msg)
 
 
 class PasswordResetFormNoActive(PasswordResetForm):
@@ -291,15 +301,15 @@ def password_reset(request):
     email = user.email if user.is_authenticated else request.POST.get('email')
     AUDIT_LOG.info("Password reset initiated for email %s.", email)
 
-    if getattr(request, 'limited', False):
-        AUDIT_LOG.warning("Password reset rate limit exceeded for email %s.", email)
-        return JsonResponse(
-            {
-                'success': False,
-                'value': _("Your previous request is in progress, please try again in a few moments.")
-            },
-            status=403
-        )
+    # if getattr(request, 'limited', False):
+    #     AUDIT_LOG.warning("Password reset rate limit exceeded for email %s.", email)
+    #     return JsonResponse(
+    #         {
+    #             'success': False,
+    #             'value': _("Your previous request is in progress, please try again in a few moments.")
+    #         },
+    #         status=403
+    #     )
 
     form = PasswordResetFormNoActive(request.POST)
     if form.is_valid():
@@ -609,12 +619,12 @@ def password_change_request_handler(request):
         email = user.email if user.is_authenticated else request.POST.get('email')
     AUDIT_LOG.info("Password reset initiated for email %s.", email)
 
-    if getattr(request, 'limited', False) and not request_from_support_tools:
-        AUDIT_LOG.warning("Password reset rate limit exceeded for email %s.", email)
-        return HttpResponse(
-            _("Your previous request is in progress, please try again in a few moments."),
-            status=403
-        )
+    # if getattr(request, 'limited', False) and not request_from_support_tools:
+    #     AUDIT_LOG.warning("Password reset rate limit exceeded for email %s.", email)
+    #     return HttpResponse(
+    #         _("Your previous request is in progress, please try again in a few moments."),
+    #         status=403
+        # )
 
     if email:
         try:

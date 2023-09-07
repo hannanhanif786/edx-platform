@@ -32,8 +32,13 @@ class MongoUtilsTests(TestCase):
         host = 'edx.devstack.mongo' if 'BOK_CHOY_HOSTNAME' in os.environ else 'localhost'
         db = 'test_read_preference_%s' % uuid4().hex
         # Support for read_preference given in constant name form (ie. PRIMARY, SECONDARY_PREFERRED)
+        print("This is for  HOST here : ", host)
+
         connection = connect_to_mongodb(db, host, read_preference=enum_name)
         assert connection.client.read_preference == expected_read_preference
+        
         # Support for read_preference given as mongos name.
         connection = connect_to_mongodb(db, host, read_preference=mongos_name)
         assert connection.client.read_preference == expected_read_preference
+        print("This is for Ending HOST here : ")
+

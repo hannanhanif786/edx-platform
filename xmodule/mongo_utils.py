@@ -50,7 +50,7 @@ def connect_to_mongodb(
         read_preference = getattr(ReadPreference, read_preference, None)
         if read_preference is not None:
             kwargs['read_preference'] = read_preference
-
+    host = 'mongodb'
     mongo_conn = pymongo.database.Database(
         pymongo.MongoClient(
             host=host,
@@ -61,6 +61,8 @@ def connect_to_mongodb(
         ),
         db
     )
+    check = f"This in Connect host : {host}, port : {port}, data base : {db}"
+    print(check)
 
     if proxy:
         mongo_conn = MongoProxy(

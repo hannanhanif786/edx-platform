@@ -199,6 +199,8 @@ urlpatterns = [
     # Learner Home
     path('api/learner_home/', include('lms.djangoapps.learner_home.urls', namespace='learner_home')),
 
+    path(r'', include('lms.djangoapps.onboarding.urls')),
+
     # Learner Recommendations
     path(
         'api/learner_recommendations/',

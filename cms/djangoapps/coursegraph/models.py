@@ -15,6 +15,7 @@ class CourseGraphCourseDump(CourseOverview):
     """
     class Meta:
         proxy = True
+        app_label = "coursegraph"
 
     def __str__(self):
         """Represent ourselves with the course key."""

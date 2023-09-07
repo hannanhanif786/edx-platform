@@ -84,7 +84,8 @@ class TestMongoModuleStoreBase(TestCase):
             tz_aware=True,
             document_class=dict,
         )
-
+        check = f"THIS is Testing : host : {HOST} : port : {PORT}"
+        print(check)
         # NOTE: Creating a single db for all the tests to save time.  This
         # is ok only as long as none of the tests modify the db.
         # If (when!) that changes, need to either reload the db, or load

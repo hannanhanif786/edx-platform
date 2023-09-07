@@ -1,0 +1,5 @@
+After Successfully send_mail through mailchimp next step is add or create user list in mailchimp so for that i starting work onit
+I need multiple apps from philuproject :
+--> mailchimp_pipeline
+--> Enrollment
+--> Custom_settings

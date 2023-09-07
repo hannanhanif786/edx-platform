@@ -41,15 +41,17 @@ class MongoContentStore(ContentStore):
         # The appropriate methods below are marked as autoretry_read - those methods will handle
         # the AutoReconnect errors.
         proxy = False
+        print("This is for confirming HOST here : ",host)
         mongo_db = connect_to_mongodb(
             db, host,
             port=port, tz_aware=tz_aware, user=user, password=password, proxy=proxy, **kwargs
         )
-
+    
         self.fs = gridfs.GridFS(mongo_db, bucket)  # pylint: disable=invalid-name
 
         self.fs_files = mongo_db[bucket + ".files"]  # the underlying collection GridFS uses
         self.chunks = mongo_db[bucket + ".chunks"]
+        print("This is for Ending HOST here : ")
 
     def close_connections(self):
         """
