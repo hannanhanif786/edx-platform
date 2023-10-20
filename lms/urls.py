@@ -50,6 +50,8 @@ from openedx.core.djangoapps.programs.models import ProgramsApiConfig
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.user_authn.views.login import redirect_to_lms_login
 from openedx.features.enterprise_support.api import enterprise_enabled
+from openedx.features.course_card.views import get_course_cards
+
 
 RESET_COURSE_DEADLINES_NAME = 'reset_course_deadlines'
 RENDER_XBLOCK_NAME = 'render_xblock'
@@ -368,7 +370,12 @@ urlpatterns += [
         name=RESET_COURSE_DEADLINES_NAME,
     ),
 
-    re_path(r'^courses/?$', branding_views.courses, name='courses'),
+# this is the end point for course
+    # re_path(r'^courses/?$', branding_views.courses, name='courses'),
+
+
+# Course app and its end point 
+    path(r'^courses/?$', get_course_cards, name="courses"),
 
     # About the course
     re_path(
@@ -829,6 +836,7 @@ if settings.FEATURES.get('ENABLE_OAUTH2_PROVIDER'):
         # Developers should use these routes, to maintain compatibility for existing client code
         path('oauth2/', include('openedx.core.djangoapps.oauth_dispatch.urls')),
         # The /_o/ prefix exists to provide a target for code in django-oauth-toolkit that
+        # path(r'^oauth2/', include('edx_oauth2_provider.urls', namespace='oauth2')),
         # uses reverse() with the 'oauth2_provider' namespace.  Developers should not access these
         # views directly, but should rather use the wrapped views at /oauth2/
         path('_o/', include('oauth2_provider.urls', namespace='oauth2_provider')),

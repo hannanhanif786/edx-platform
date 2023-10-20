@@ -447,6 +447,8 @@ edx-codejail==3.3.3
 edx-completion==4.2.0
     # via -r requirements/edx/base.in
 edx-django-release-util==1.2.0
+edx-django-oauth2-provider
+
     # via
     #   -r requirements/edx/base.in
     #   openedx-blockstore
